@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { EnvironmentVariables } from './config/environment.validation';
+import type { EnvironmentVariables } from '@logscope/config';
 
 export interface AppInfo {
   name: string;
