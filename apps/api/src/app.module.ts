@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { validateEnvironment } from '@logscope/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { validateEnvironment } from './config/environment.validation';
 import { HealthModule } from './modules/health/health.module';
 
 @Module({

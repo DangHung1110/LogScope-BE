@@ -1,0 +1,55 @@
+{
+  "name": "api",
+  "version": "0.1.0",
+  "description": "LogScope public API service",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "pnpm --filter @logscope/config build && nest build",
+    "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
+    "start": "nest start",
+    "start:dev": "pnpm --filter @logscope/config build && nest start --watch",
+    "start:debug": "pnpm --filter @logscope/config build && nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "pnpm --filter @logscope/config build && tsc --noEmit",
+    "test": "pnpm --filter @logscope/config build && jest",
+    "test:watch": "jest --watch",
+    "test:cov": "pnpm --filter @logscope/config build && jest --coverage",
+    "test:ci": "pnpm --filter @logscope/config build && jest --runInBand --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../../node_modules/.bin/jest --runInBand",
+    "test:e2e": "pnpm --filter @logscope/config build && jest --config ./test/jest-e2e.json --runInBand"
+  },
+  "dependencies": {
+    "@logscope/config": "workspace:*",
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.4",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/platform-express": "^11.0.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
+    "helmet": "^8.2.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../../coverage/apps/api",
+    "testEnvironment": "node"
+  }
+}
