@@ -6,6 +6,10 @@ export interface EnvironmentVariables {
   APP_VERSION: string;
   CORS_ORIGINS: string;
   INGESTION_PORT: number;
+  JWT_ACCESS_EXPIRES_IN: string;
+  JWT_ACCESS_SECRET: string;
+  JWT_REFRESH_EXPIRES_IN: string;
+  JWT_REFRESH_SECRET: string;
   LOG_PROCESSOR_CONCURRENCY: number;
   NODE_ENV: NodeEnvironment;
 }
@@ -34,6 +38,22 @@ export function validateEnvironment(
       'http://localhost:3000,http://localhost:5173',
     ),
     INGESTION_PORT: readPort(config.INGESTION_PORT, 'INGESTION_PORT', 3001),
+    JWT_ACCESS_EXPIRES_IN: readString(config.JWT_ACCESS_EXPIRES_IN, 'JWT_ACCESS_EXPIRES_IN', '15m'),
+    JWT_ACCESS_SECRET: readString(
+      config.JWT_ACCESS_SECRET,
+      'JWT_ACCESS_SECRET',
+      'dev-access-secret-change-me',
+    ),
+    JWT_REFRESH_EXPIRES_IN: readString(
+      config.JWT_REFRESH_EXPIRES_IN,
+      'JWT_REFRESH_EXPIRES_IN',
+      '7d',
+    ),
+    JWT_REFRESH_SECRET: readString(
+      config.JWT_REFRESH_SECRET,
+      'JWT_REFRESH_SECRET',
+      'dev-refresh-secret-change-me',
+    ),
     LOG_PROCESSOR_CONCURRENCY: readPositiveInteger(
       config.LOG_PROCESSOR_CONCURRENCY,
       'LOG_PROCESSOR_CONCURRENCY',
