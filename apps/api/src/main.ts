@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import type { EnvironmentVariables } from '@logscope/config';
 import { AppModule } from './app.module';
-import { EnvironmentVariables } from './config/environment.validation';
 import { configureApp } from './setup-app';
 
 async function bootstrap(): Promise<void> {
@@ -13,7 +13,7 @@ async function bootstrap(): Promise<void> {
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
-  const port = configService.get('PORT', { infer: true });
+  const port = configService.get('API_PORT', { infer: true });
 
   configureApp(app, corsOrigins);
 
