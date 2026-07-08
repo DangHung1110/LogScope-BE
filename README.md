@@ -1,5 +1,20 @@
 # LogScope Backend
 
+## Local infrastructure
+
+```bash
+docker compose up -d
+docker compose ps
+```
+
+Services:
+
+- PostgreSQL: `localhost:15432`
+- Redis: `localhost:16379`
+- Elasticsearch: `http://localhost:9200`
+- Kafka: `localhost:9092`
+- Kafka UI: `http://localhost:8080`
+
 Backend API cho nền tảng observability LogScope, được xây dựng bằng NestJS và pnpm.
 
 ## Yêu cầu

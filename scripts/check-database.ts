@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { createPrismaClientOptions } from '../src/modules/database/prisma-client-options';
+import { createPrismaClientOptions } from '../apps/api/src/modules/database/prisma-client-options';
 
 const prisma = new PrismaClient(createPrismaClientOptions());
 

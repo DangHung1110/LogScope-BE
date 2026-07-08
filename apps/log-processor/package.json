@@ -1,0 +1,15 @@
+{
+  "name": "log-processor",
+  "version": "0.1.0",
+  "description": "Log processor service placeholder",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix",
+    "start:dev": "ts-node --transpile-only src/main.ts",
+    "test": "echo \"No tests for log-processor yet\"",
+    "typecheck": "tsc --noEmit"
+  }
+}

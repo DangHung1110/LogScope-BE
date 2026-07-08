@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { EnvironmentVariables } from '../../../config/environment.validation';
+import { EnvironmentVariables } from '@logscope/config';
 import { PrismaService } from '../../database/prisma.service';
 import { AuthenticatedRequest, JwtTokenPayload } from '../types/auth.types';
 

@@ -1,7 +1,7 @@
 {
-  "name": "logscope-be",
+  "name": "logscope",
   "version": "0.1.0",
-  "description": "Backend API for the LogScope observability platform",
+  "description": "Monorepo for the LogScope observability platform",
   "private": true,
   "license": "UNLICENSED",
   "packageManager": "pnpm@11.7.0",
@@ -10,7 +10,10 @@
     "pnpm": ">=10"
   },
   "scripts": {
-    "build": "nest build",
+    "dev:api": "pnpm --filter api start:dev",
+    "dev:ingestion": "pnpm --filter ingestion-service start:dev",
+    "dev:processor": "pnpm --filter log-processor start:dev",
+    "build": "pnpm -r build",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "db:check": "ts-node scripts/check-database.ts",
     "db:generate": "prisma generate",
@@ -19,35 +22,11 @@
     "db:seed": "prisma db seed",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
-    "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
-    "lint": "eslint . --max-warnings=0",
-    "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:ci": "jest --runInBand --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json --runInBand"
-  },
-  "dependencies": {
-    "@nestjs/common": "^11.0.1",
-    "@nestjs/config": "^4.0.4",
-    "@nestjs/core": "^11.0.1",
-    "@nestjs/jwt": "^11.0.2",
-    "@nestjs/platform-express": "^11.0.1",
-    "@prisma/adapter-pg": "^7.8.0",
-    "@prisma/client": "^7.8.0",
-    "bcryptjs": "^3.0.3",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.15.1",
-    "helmet": "^8.2.0",
-    "pg": "^8.22.0",
-    "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "lint": "pnpm --filter @logscope/config build && pnpm -r --parallel lint",
+    "lint:fix": "pnpm --filter @logscope/config build && pnpm -r --parallel lint:fix",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:e2e": "pnpm --filter api test:e2e"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -75,22 +54,5 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   }
 }
