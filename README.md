@@ -1,40 +1,19 @@
 # LogScope Backend
 
-Monorepo backend cho nền tảng observability LogScope.
-
-## Monorepo layout
-
-```text
-apps/
-  api/                # NestJS public API
-  ingestion-service/  # Service nhận log/metric/trace trước khi đẩy Kafka
-  log-processor/      # Service xử lý stream log
-  web/                # Dashboard placeholder
-packages/
-  config/             # Config/env validation dùng chung
-  database/
-  kafka/
-  contracts/
-  shared/
-infrastructure/
-  docker/
-  kafka/
-  elasticsearch/
-  postgres/
-```
-
-## Workspace scripts
+## Local infrastructure
 
 ```bash
-pnpm dev:api
-pnpm dev:ingestion
-pnpm dev:processor
-pnpm build
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm test:e2e
+docker compose up -d
+docker compose ps
 ```
+
+Services:
+
+- PostgreSQL: `localhost:15432`
+- Redis: `localhost:16379`
+- Elasticsearch: `http://localhost:9200`
+- Kafka: `localhost:9092`
+- Kafka UI: `http://localhost:8080`
 
 Backend API cho nền tảng observability LogScope, được xây dựng bằng NestJS và pnpm.
 
