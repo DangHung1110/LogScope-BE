@@ -1,15 +1,51 @@
 {
   "name": "ingestion-service",
   "version": "0.1.0",
-  "description": "Log ingestion service placeholder",
+  "description": "LogScope log ingestion service",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "pnpm --filter @logscope/config build && pnpm --filter @logscope/contracts build && pnpm --filter @logscope/kafka build && tsc -p tsconfig.json",
+    "check": "pnpm lint && pnpm typecheck && pnpm test",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
-    "start:dev": "ts-node --transpile-only src/main.ts",
-    "test": "echo \"No tests for ingestion-service yet\"",
+    "start:dev": "pnpm --filter @logscope/config build && pnpm --filter @logscope/contracts build && pnpm --filter @logscope/kafka build && ts-node --transpile-only src/main.ts",
+    "test": "pnpm --filter @logscope/config build && pnpm --filter @logscope/contracts build && pnpm --filter @logscope/kafka build && jest",
+    "test:ci": "pnpm test -- --runInBand",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@logscope/config": "workspace:*",
+    "@logscope/contracts": "workspace:*",
+    "@logscope/kafka": "workspace:*",
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.4",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/platform-express": "^11.0.1",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "bcryptjs": "^3.0.3",
+    "helmet": "^8.2.0",
+    "pg": "^8.22.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "zod": "^4.1.13"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../../coverage/apps/ingestion-service",
+    "testEnvironment": "node"
   }
 }
