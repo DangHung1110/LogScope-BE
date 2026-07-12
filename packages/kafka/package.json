@@ -1,0 +1,25 @@
+{
+  "name": "@logscope/kafka",
+  "version": "0.1.0",
+  "description": "Shared Kafka client, producer, consumer and serialization utilities for LogScope",
+  "private": true,
+  "license": "UNLICENSED",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix",
+    "test": "echo \"No tests for @logscope/kafka yet\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "kafkajs": "^2.2.4"
+  }
+}
