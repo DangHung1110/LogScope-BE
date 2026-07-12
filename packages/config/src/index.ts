@@ -5,6 +5,8 @@ export interface EnvironmentVariables {
   APP_NAME: string;
   APP_VERSION: string;
   CORS_ORIGINS: string;
+  ELASTICSEARCH_LOGS_INDEX: string;
+  ELASTICSEARCH_NODE: string;
   INGESTION_PORT: number;
   JWT_ACCESS_EXPIRES_IN: string;
   JWT_ACCESS_SECRET: string;
@@ -39,6 +41,16 @@ export function validateEnvironment(
       config.CORS_ORIGINS,
       'CORS_ORIGINS',
       'http://localhost:3000,http://localhost:5173',
+    ),
+    ELASTICSEARCH_LOGS_INDEX: readString(
+      config.ELASTICSEARCH_LOGS_INDEX,
+      'ELASTICSEARCH_LOGS_INDEX',
+      'syspulse-logs',
+    ),
+    ELASTICSEARCH_NODE: readString(
+      config.ELASTICSEARCH_NODE,
+      'ELASTICSEARCH_NODE',
+      'http://localhost:9200',
     ),
     INGESTION_PORT: readPort(config.INGESTION_PORT, 'INGESTION_PORT', 3001),
     JWT_ACCESS_EXPIRES_IN: readString(config.JWT_ACCESS_EXPIRES_IN, 'JWT_ACCESS_EXPIRES_IN', '15m'),
