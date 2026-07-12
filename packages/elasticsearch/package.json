@@ -1,0 +1,26 @@
+{
+  "name": "@logscope/elasticsearch",
+  "version": "0.1.0",
+  "description": "Shared Elasticsearch client and log index utilities for LogScope",
+  "private": true,
+  "license": "UNLICENSED",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix",
+    "test": "echo \"No tests for @logscope/elasticsearch yet\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@elastic/elasticsearch": "^9.2.0",
+    "@logscope/contracts": "workspace:*"
+  }
+}
