@@ -10,6 +10,9 @@ export interface EnvironmentVariables {
   JWT_ACCESS_SECRET: string;
   JWT_REFRESH_EXPIRES_IN: string;
   JWT_REFRESH_SECRET: string;
+  KAFKA_BROKERS: string;
+  KAFKA_CLIENT_ID: string;
+  KAFKA_SEND_TIMEOUT_MS: number;
   LOG_PROCESSOR_CONCURRENCY: number;
   NODE_ENV: NodeEnvironment;
 }
@@ -53,6 +56,13 @@ export function validateEnvironment(
       config.JWT_REFRESH_SECRET,
       'JWT_REFRESH_SECRET',
       'dev-refresh-secret-change-me',
+    ),
+    KAFKA_BROKERS: readString(config.KAFKA_BROKERS, 'KAFKA_BROKERS', 'localhost:9092'),
+    KAFKA_CLIENT_ID: readString(config.KAFKA_CLIENT_ID, 'KAFKA_CLIENT_ID', 'logscope'),
+    KAFKA_SEND_TIMEOUT_MS: readPositiveInteger(
+      config.KAFKA_SEND_TIMEOUT_MS,
+      'KAFKA_SEND_TIMEOUT_MS',
+      10_000,
     ),
     LOG_PROCESSOR_CONCURRENCY: readPositiveInteger(
       config.LOG_PROCESSOR_CONCURRENCY,
