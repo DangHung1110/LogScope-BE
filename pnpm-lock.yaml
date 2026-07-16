@@ -23,6 +23,9 @@ importers:
       '@nestjs/testing':
         specifier: ^11.0.1
         version: 11.1.27(@nestjs/common@11.1.27(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.27)(@nestjs/platform-express@11.1.27)
+      '@prisma/client':
+        specifier: ^7.8.0
+        version: 7.8.0(prisma@7.8.0(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(typescript@5.9.3)
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.6
@@ -180,7 +183,38 @@ importers:
         specifier: ^4.1.13
         version: 4.4.3
 
-  apps/log-processor: {}
+  apps/log-processor:
+    dependencies:
+      '@logscope/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@logscope/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@logscope/elasticsearch':
+        specifier: workspace:*
+        version: link:../../packages/elasticsearch
+      '@logscope/kafka':
+        specifier: workspace:*
+        version: link:../../packages/kafka
+      '@nestjs/common':
+        specifier: ^11.0.1
+        version: 11.1.27(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/config':
+        specifier: ^4.0.4
+        version: 4.0.4(@nestjs/common@11.1.27(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@nestjs/core':
+        specifier: ^11.0.1
+        version: 11.1.27(@nestjs/common@11.1.27(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.27)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      kafkajs:
+        specifier: ^2.2.4
+        version: 2.2.4
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.2
 
   apps/web: {}
 
