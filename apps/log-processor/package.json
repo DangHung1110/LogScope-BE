@@ -1,15 +1,45 @@
 {
   "name": "log-processor",
   "version": "0.1.0",
-  "description": "Log processor service placeholder",
+  "description": "Kafka worker that validates, redacts and indexes LogScope events",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "pnpm --filter @logscope/config build && pnpm --filter @logscope/contracts build && pnpm --filter @logscope/kafka build && pnpm --filter @logscope/elasticsearch build && tsc -p tsconfig.json",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
-    "start:dev": "ts-node --transpile-only src/main.ts",
-    "test": "echo \"No tests for log-processor yet\"",
+    "start:dev": "pnpm --filter @logscope/config build && pnpm --filter @logscope/contracts build && pnpm --filter @logscope/kafka build && pnpm --filter @logscope/elasticsearch build && ts-node --transpile-only src/main.ts",
+    "test": "pnpm --filter @logscope/contracts build && jest --runInBand",
+    "test:ci": "pnpm test",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@logscope/config": "workspace:*",
+    "@logscope/contracts": "workspace:*",
+    "@logscope/elasticsearch": "workspace:*",
+    "@logscope/kafka": "workspace:*",
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.4",
+    "@nestjs/core": "^11.0.1",
+    "kafkajs": "^2.2.4",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../../coverage/apps/log-processor",
+    "testEnvironment": "node"
   }
 }

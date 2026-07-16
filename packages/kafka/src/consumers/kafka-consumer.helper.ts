@@ -14,6 +14,7 @@ export interface KafkaConsumerHelperOptions {
   groupId: string;
   kafka: Kafka;
   logger?: KafkaLogger;
+  onConsumerCreated?: (consumer: Consumer) => void;
   runConfig: Omit<ConsumerRunConfig, 'eachMessage'> & {
     eachMessage: (payload: EachMessagePayload) => Promise<void>;
   };
@@ -32,6 +33,7 @@ export async function startKafkaConsumer(
     groupId: options.groupId,
     ...options.consumerConfig,
   });
+  options.onConsumerCreated?.(consumer);
 
   options.logger?.info('Connecting Kafka consumer', {
     groupId: options.groupId,

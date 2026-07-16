@@ -16,6 +16,7 @@ export interface EnvironmentVariables {
   KAFKA_CLIENT_ID: string;
   KAFKA_SEND_TIMEOUT_MS: number;
   LOG_PROCESSOR_CONCURRENCY: number;
+  LOG_PROCESSOR_GROUP_ID: string;
   NODE_ENV: NodeEnvironment;
 }
 
@@ -80,6 +81,11 @@ export function validateEnvironment(
       config.LOG_PROCESSOR_CONCURRENCY,
       'LOG_PROCESSOR_CONCURRENCY',
       4,
+    ),
+    LOG_PROCESSOR_GROUP_ID: readString(
+      config.LOG_PROCESSOR_GROUP_ID,
+      'LOG_PROCESSOR_GROUP_ID',
+      'logscope-log-processor-v1',
     ),
     NODE_ENV: nodeEnvironment as NodeEnvironment,
   };
