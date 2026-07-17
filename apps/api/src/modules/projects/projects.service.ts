@@ -101,6 +101,24 @@ export class ProjectsService {
     return this.toProjectResponse(project);
   }
 
+  async assertProjectAccess(userId: string, projectId: string): Promise<void> {
+    const membership = await this.prisma.projectMember.findUnique({
+      select: {
+        id: true,
+      },
+      where: {
+        userId_projectId: {
+          projectId,
+          userId,
+        },
+      },
+    });
+
+    if (!membership) {
+      throw new NotFoundException('Project not found');
+    }
+  }
+
   async updateProject(
     userId: string,
     projectId: string,

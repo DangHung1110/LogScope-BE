@@ -16,11 +16,25 @@
     "build": "tsc -p tsconfig.json",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
-    "test": "echo \"No tests for @logscope/elasticsearch yet\"",
+    "test": "jest --runInBand",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^9.2.0",
     "@logscope/contracts": "workspace:*"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageDirectory": "../../coverage/packages/elasticsearch",
+    "testEnvironment": "node"
   }
 }

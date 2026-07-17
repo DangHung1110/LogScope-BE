@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { EnvironmentVariables } from '@logscope/config';
 import { PrismaService } from '../../database/prisma.service';
 import { AuthenticatedRequest, JwtTokenPayload } from '../types/auth.types';
+import { getRequestFromExecutionContext } from '../utils/request-context';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -14,7 +15,7 @@ export class JwtAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    const request = getRequestFromExecutionContext(context);
     const token = this.extractBearerToken(request);
 
     if (!token) {

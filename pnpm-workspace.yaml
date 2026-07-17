@@ -3,6 +3,7 @@ packages:
   - packages/*
 
 allowBuilds:
+  '@apollo/protobufjs': true
   '@prisma/engines': true
   prisma: true
   unrs-resolver: false
