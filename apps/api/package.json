@@ -43,9 +43,11 @@
     "class-validator": "^0.15.1",
     "express": "^5.2.1",
     "graphql": "^16.11.0",
+    "graphql-subscriptions": "^3.0.0",
     "graphql-type-json": "^0.3.2",
     "helmet": "^8.2.0",
     "pg": "^8.22.0",
+    "redis": "^6.1.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "ts-morph": "^28.0.0"

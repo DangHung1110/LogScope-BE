@@ -4,10 +4,14 @@ import { InvalidLogEventError } from '../errors/invalid-log-event.error';
 import { normalizeLogEvent } from '../processing/normalize-log-event';
 import { redactSensitiveData } from '../processing/redact-sensitive-data';
 import { ElasticsearchLogWriterService } from './elasticsearch-log-writer.service';
+import { RealtimeLogPublisherService } from './realtime-log-publisher.service';
 
 @Injectable()
 export class LogEventProcessorService {
-  constructor(private readonly logWriter: ElasticsearchLogWriterService) {}
+  constructor(
+    private readonly logWriter: ElasticsearchLogWriterService,
+    private readonly realtimePublisher: RealtimeLogPublisherService,
+  ) {}
 
   async process(payload: unknown): Promise<RawLogEvent> {
     const validationResult = rawLogEventSchema.safeParse(payload);
@@ -25,6 +29,7 @@ export class LogEventProcessorService {
     };
 
     await this.logWriter.indexLog(processedEvent);
+    await this.realtimePublisher.publish(processedEvent);
     return processedEvent;
   }
 }

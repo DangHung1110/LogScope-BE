@@ -18,6 +18,7 @@ export interface EnvironmentVariables {
   LOG_PROCESSOR_CONCURRENCY: number;
   LOG_PROCESSOR_GROUP_ID: string;
   NODE_ENV: NodeEnvironment;
+  REDIS_URL: string;
 }
 
 const supportedEnvironments: NodeEnvironment[] = ['development', 'test', 'production'];
@@ -88,6 +89,7 @@ export function validateEnvironment(
       'logscope-log-processor-v1',
     ),
     NODE_ENV: nodeEnvironment as NodeEnvironment,
+    REDIS_URL: readString(config.REDIS_URL, 'REDIS_URL', 'redis://localhost:16379'),
   };
 }
 

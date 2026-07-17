@@ -85,7 +85,7 @@ export class KafkaLogConsumerService implements OnApplicationBootstrap, OnModule
     try {
       const event = await this.logEventProcessor.process(payload);
       await this.commitOffset(topic, partition, message.offset);
-      this.logger.debug(`Indexed log event ${event.eventId}`);
+      this.logger.debug(`Processed log event ${event.eventId}`);
     } catch (error: unknown) {
       if (error instanceof InvalidLogEventError) {
         await this.sendToDeadLetterQueue(
@@ -100,7 +100,7 @@ export class KafkaLogConsumerService implements OnApplicationBootstrap, OnModule
         return;
       }
 
-      this.logger.error('Failed to index log event; Kafka offset was not committed', error);
+      this.logger.error('Failed to process log event; Kafka offset was not committed', error);
       throw error;
     }
   }
