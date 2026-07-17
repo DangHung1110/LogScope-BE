@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 export const RAW_LOG_EVENT_VERSION = 'logs.raw.v1';
 
+export const LOG_RECEIVED_CHANNEL_V1 = 'logs.received.v1';
+
 export const LOG_LEVELS = ['debug', 'info', 'warn', 'error', 'fatal'] as const;
 
 export type LogLevel = (typeof LOG_LEVELS)[number];

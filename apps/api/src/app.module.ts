@@ -10,6 +10,7 @@ import { DatabaseModule } from './modules/database/database.module';
 import { HealthModule } from './modules/health/health.module';
 import { LogsModule } from './modules/logs/logs.module';
 import { ProjectsModule } from './modules/projects/projects.module';
+import { createGraphQLContext } from './graphql/graphql-context';
 
 @Module({
   imports: [
@@ -21,10 +22,14 @@ import { ProjectsModule } from './modules/projects/projects.module';
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: true,
+      context: createGraphQLContext,
       driver: ApolloDriver,
       graphiql: process.env.NODE_ENV !== 'production',
       path: '/graphql',
       sortSchema: true,
+      subscriptions: {
+        'graphql-ws': {},
+      },
       useGlobalPrefix: true,
     }),
     AuthModule,

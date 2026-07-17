@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { GraphQLSchemaBuilderModule, GraphQLSchemaFactory } from '@nestjs/graphql';
 import { printSchema } from 'graphql';
 import { LogSearchResolver } from './log-search.resolver';
+import { RealtimeLogResolver } from './realtime-log.resolver';
 
 describe('Log search GraphQL schema', () => {
   it('exposes the secured log connection query and filters', async () => {
@@ -9,7 +10,7 @@ describe('Log search GraphQL schema', () => {
       imports: [GraphQLSchemaBuilderModule],
     }).compile();
     const schemaFactory = module.get(GraphQLSchemaFactory);
-    const schema = await schemaFactory.create([LogSearchResolver]);
+    const schema = await schemaFactory.create([LogSearchResolver, RealtimeLogResolver]);
     const schemaDefinition = printSchema(schema);
 
     expect(schemaDefinition).toContain('logs(filter: LogFilterInput!): LogConnection!');
@@ -18,5 +19,6 @@ describe('Log search GraphQL schema', () => {
     expect(schemaDefinition).toContain('to: DateTime!');
     expect(schemaDefinition).toContain('limit: Int! = 50');
     expect(schemaDefinition).toContain('nextCursor: String');
+    expect(schemaDefinition).toContain('logReceived(projectId: ID!): LogEvent!');
   });
 });

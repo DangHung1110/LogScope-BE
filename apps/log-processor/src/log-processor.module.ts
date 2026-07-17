@@ -5,6 +5,7 @@ import { DeadLetterProducerService } from './services/dead-letter-producer.servi
 import { ElasticsearchLogWriterService } from './services/elasticsearch-log-writer.service';
 import { KafkaLogConsumerService } from './services/kafka-log-consumer.service';
 import { LogEventProcessorService } from './services/log-event-processor.service';
+import { RealtimeLogPublisherService } from './services/realtime-log-publisher.service';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { LogEventProcessorService } from './services/log-event-processor.service
     LogEventProcessorService,
     DeadLetterProducerService,
     KafkaLogConsumerService,
+    RealtimeLogPublisherService,
   ],
 })
 export class LogProcessorModule {}
