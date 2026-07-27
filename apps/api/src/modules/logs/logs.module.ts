@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
+import { DatabaseModule } from '../database/database.module';
 import { ProjectsModule } from '../projects/projects.module';
 import { LogSearchResolver } from './log-search.resolver';
 import { LogSearchService } from './log-search.service';
@@ -8,7 +9,7 @@ import { ElasticsearchLogReaderService } from './services/elasticsearch-log-read
 import { RealtimeLogSubscriptionService } from './services/realtime-log-subscription.service';
 
 @Module({
-  imports: [AuthModule, ProjectsModule],
+  imports: [AuthModule, DatabaseModule, ProjectsModule],
   providers: [
     ElasticsearchLogReaderService,
     LogSearchResolver,

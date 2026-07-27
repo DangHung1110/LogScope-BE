@@ -1,90 +1,188 @@
 # LogScope Backend
 
-## Local infrastructure
+LogScope is a personal observability platform for collecting, processing, searching, and streaming application logs. This repository contains the backend services, shared packages, database schema, and local infrastructure configuration used by the LogScope frontend.
 
-```bash
-docker compose up -d
-docker compose ps
+## What It Does
+
+- Authenticates users with JWT access and refresh tokens.
+- Manages projects, project members, roles, and API keys.
+- Accepts log events through an ingestion API protected by `x-api-key`.
+- Sends raw logs through Kafka for asynchronous processing.
+- Normalizes and redacts sensitive log attributes before indexing.
+- Stores searchable logs in Elasticsearch.
+- Publishes realtime log events through Redis and GraphQL subscriptions.
+- Exposes REST and GraphQL APIs for the frontend console.
+
+## Tech Stack
+
+- NestJS, TypeScript, pnpm workspaces
+- Prisma 7 and PostgreSQL
+- Kafka for raw log transport
+- Elasticsearch for log search
+- Redis for realtime fan-out
+- GraphQL over HTTP and WebSocket
+
+## Repository Layout
+
+```text
+apps/api/                 REST, GraphQL, auth, projects, API keys, log search
+apps/ingestion-service/   Public log ingestion API
+apps/log-processor/       Kafka consumer, redaction, indexing, realtime publish
+packages/config/          Shared environment validation
+packages/contracts/       Versioned log event contracts
+packages/elasticsearch/   Elasticsearch client, mappings, search helpers
+packages/kafka/           Kafka client, topics, serializers
+packages/shared/          Shared utilities
+prisma/                   Prisma schema, migrations, seed
 ```
 
-Services:
+## Requirements
 
-- PostgreSQL: `localhost:15432`
-- Redis: `localhost:16379`
-- Elasticsearch: `http://localhost:9200`
-- Kafka: `localhost:9092`
-- Kafka UI: `http://localhost:8080`
+- Node.js 22+
+- pnpm 10+
+- PostgreSQL, either local or Docker
+- Docker Desktop for Redis, Kafka, Elasticsearch, and Kafka UI
 
-Backend API cho nền tảng observability LogScope, được xây dựng bằng NestJS và pnpm.
+For a lighter personal setup, keep PostgreSQL local and run only Redis, Kafka, and Elasticsearch in Docker.
 
-## Yêu cầu
+## Environment
 
-- Node.js 22 trở lên
-- pnpm 10 trở lên
+Create `LogScope-BE/.env` from `.env.example`.
 
-## Khởi động
+Common local setup with PostgreSQL running outside Docker:
+
+```env
+DATABASE_URL=postgresql://logscope:logscope@localhost:5432/logscope?schema=public
+API_PORT=3000
+INGESTION_PORT=3001
+KAFKA_BROKERS=localhost:9092
+REDIS_URL=redis://localhost:16379
+ELASTICSEARCH_NODE=http://localhost:9200
+ELASTICSEARCH_LOGS_INDEX=syspulse-logs
+CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+JWT_ACCESS_SECRET=change-me-access-secret
+JWT_REFRESH_SECRET=change-me-refresh-secret
+JWT_ACCESS_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+```
+
+If PostgreSQL is also started from this repository's `docker-compose.yml`, use port `15432` instead:
+
+```env
+DATABASE_URL=postgresql://logscope:logscope@localhost:15432/logscope?schema=public
+```
+
+## Local Setup
+
+Install dependencies:
 
 ```bash
 pnpm install
-cp .env.example .env
-pnpm start:dev
 ```
 
-API mặc định chạy tại `http://localhost:3000`.
+Start the infrastructure needed for the full log pipeline:
 
-## Endpoint hiện có
+```bash
+docker compose up -d redis kafka kafka-ui elasticsearch
+```
 
-| Method | Endpoint         | Mô tả                        |
-| ------ | ---------------- | ---------------------------- |
-| GET    | `/api/v1`        | Thông tin ứng dụng           |
-| GET    | `/api/v1/health` | Trạng thái, uptime và bộ nhớ |
+If you want Docker PostgreSQL too:
+
+```bash
+docker compose up -d postgres
+```
+
+Prepare the database:
+
+```bash
+pnpm db:generate
+pnpm db:migrate
+```
+
+Run the services in separate terminals:
+
+```bash
+pnpm dev:api
+pnpm dev:ingestion
+pnpm dev:processor
+```
+
+Service URLs:
+
+- API: `http://localhost:3000`
+- Ingestion API: `http://localhost:3001`
+- GraphQL: `http://localhost:3000/api/graphql`
+- Kafka UI: `http://localhost:8080`
+- Elasticsearch: `http://localhost:9200`
+
+## Main APIs
+
+REST:
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/v1/health` | Service health |
+| `POST` | `/api/v1/auth/register` | Create account |
+| `POST` | `/api/v1/auth/login` | Sign in |
+| `GET` | `/api/v1/auth/me` | Current user |
+| `GET` | `/api/v1/projects` | List accessible projects |
+| `POST` | `/api/v1/projects` | Create project |
+| `GET` | `/api/v1/projects/:projectId` | Project details |
+| `POST` | `/api/v1/projects/:projectId/members` | Add project member |
+| `POST` | `/api/v1/projects/:projectId/api-keys` | Create API key |
+| `DELETE` | `/api/v1/projects/:projectId/api-keys/:keyId` | Revoke API key |
+
+Ingestion:
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/v1/logs` | Ingest one log event |
+| `POST` | `/v1/logs/batch` | Ingest up to 500 log events |
+
+GraphQL:
+
+- Query `logs(filter: LogFilterInput!)`
+- Subscription `logReceived(projectId: ID!)`
+
+## Example Log Ingestion
+
+```bash
+curl -X POST http://localhost:3001/v1/logs \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: sp_live_your_key" \
+  -d '{
+    "service": "checkout-api",
+    "environment": "production",
+    "level": "error",
+    "message": "Payment provider timeout",
+    "traceId": "trace-001",
+    "attributes": {
+      "orderId": "ord_123"
+    }
+  }'
+```
 
 ## Scripts
 
 ```bash
-pnpm start:dev     # Chạy development với watch mode
-pnpm build         # Build production
-pnpm start:prod    # Chạy bản đã build
-pnpm lint          # Kiểm tra ESLint
-pnpm lint:fix      # Tự động sửa lỗi lint có thể sửa
-pnpm format        # Kiểm tra định dạng Prettier
-pnpm format:write  # Định dạng source code
-pnpm typecheck     # Kiểm tra TypeScript
-pnpm test          # Unit test
-pnpm test:e2e      # End-to-end test
-pnpm check         # Lint + typecheck + unit test
+pnpm dev:api             # Run the main API
+pnpm dev:ingestion       # Run the ingestion service
+pnpm dev:processor       # Run the log processor
+pnpm db:generate         # Generate Prisma client
+pnpm db:migrate          # Apply development migrations
+pnpm db:migrate:deploy   # Apply production migrations
+pnpm db:seed             # Seed local data
+pnpm lint                # Run ESLint
+pnpm typecheck           # Run TypeScript checks
+pnpm test                # Run unit tests
+pnpm test:e2e            # Run API e2e tests
+pnpm check               # Lint, typecheck, and unit test
+pnpm build               # Build all workspaces
 ```
 
-## Cấu trúc
+## Development Notes
 
-```text
-src/
-├── config/                  # Kiểm tra và khai báo cấu hình môi trường
-├── modules/
-│   └── health/             # Health-check module
-├── app.controller.ts
-├── app.module.ts
-├── app.service.ts
-├── main.ts                 # Bootstrap
-└── setup-app.ts            # Global middleware, CORS, versioning, pipes
-test/                       # E2E tests
-```
-
-Mỗi domain mới nên nằm trong `src/modules/<domain>`, ví dụ `ingestion`, `logs`,
-`traces`, `alerts` và `projects`.
-
-## Quy ước chất lượng
-
-- TypeScript strict mode và typed ESLint rules.
-- Prettier quyết định format; ESLint kiểm tra lỗi và quy ước code.
-- DTO đầu vào được whitelist, transform và từ chối field không khai báo.
-- API dùng global prefix `/api` và URI versioning `/v1`.
-- Biến môi trường được validate khi ứng dụng khởi động.
-
-Trước khi commit:
-
-```bash
-pnpm check
-pnpm test:e2e
-pnpm build
-```
+- Keep `.env` local and never commit secrets.
+- PostgreSQL data is not part of the application image; use a local DB or a separate Docker volume.
+- Elasticsearch and Kafka are heavier than PostgreSQL. Start them only when testing log search, ingestion, or realtime streaming.
+- Before pushing backend changes, run `pnpm check` and `pnpm test:e2e` when the required services are available.
