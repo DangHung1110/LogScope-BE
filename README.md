@@ -115,35 +115,6 @@ Service URLs:
 - Kafka UI: `http://localhost:8080`
 - Elasticsearch: `http://localhost:9200`
 
-## Main APIs
-
-REST:
-
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/v1/health` | Service health |
-| `POST` | `/api/v1/auth/register` | Create account |
-| `POST` | `/api/v1/auth/login` | Sign in |
-| `GET` | `/api/v1/auth/me` | Current user |
-| `GET` | `/api/v1/projects` | List accessible projects |
-| `POST` | `/api/v1/projects` | Create project |
-| `GET` | `/api/v1/projects/:projectId` | Project details |
-| `POST` | `/api/v1/projects/:projectId/members` | Add project member |
-| `POST` | `/api/v1/projects/:projectId/api-keys` | Create API key |
-| `DELETE` | `/api/v1/projects/:projectId/api-keys/:keyId` | Revoke API key |
-
-Ingestion:
-
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `POST` | `/v1/logs` | Ingest one log event |
-| `POST` | `/v1/logs/batch` | Ingest up to 500 log events |
-
-GraphQL:
-
-- Query `logs(filter: LogFilterInput!)`
-- Subscription `logReceived(projectId: ID!)`
-
 ## Example Log Ingestion
 
 ```bash
