@@ -8,7 +8,7 @@ import { createLogSchema } from './dto/create-log.dto';
 import type { CreateLogDto } from './dto/create-log.dto';
 import { ApiKeyGuard } from './guards/api-key.guard';
 import { RateLimitGuard } from './guards/rate-limit.guard';
-import { LogIngestionService } from './services/log-ingestion.service';
+import { LogIngestionService } from './application/log-ingestion.service';
 import type { AuthenticatedProject } from './types/authenticated-project';
 import type { AcceptedBatchLogResponse, AcceptedLogResponse } from './types/log-ingestion.types';
 import { ZodValidationPipe } from './validation/zod-validation.pipe';

@@ -56,9 +56,10 @@ export function validateEnvironment(
     ),
     INGESTION_PORT: readPort(config.INGESTION_PORT, 'INGESTION_PORT', 3001),
     JWT_ACCESS_EXPIRES_IN: readString(config.JWT_ACCESS_EXPIRES_IN, 'JWT_ACCESS_EXPIRES_IN', '15m'),
-    JWT_ACCESS_SECRET: readString(
+    JWT_ACCESS_SECRET: readSecret(
       config.JWT_ACCESS_SECRET,
       'JWT_ACCESS_SECRET',
+      nodeEnvironment as NodeEnvironment,
       'dev-access-secret-change-me',
     ),
     JWT_REFRESH_EXPIRES_IN: readString(
@@ -66,9 +67,10 @@ export function validateEnvironment(
       'JWT_REFRESH_EXPIRES_IN',
       '7d',
     ),
-    JWT_REFRESH_SECRET: readString(
+    JWT_REFRESH_SECRET: readSecret(
       config.JWT_REFRESH_SECRET,
       'JWT_REFRESH_SECRET',
+      nodeEnvironment as NodeEnvironment,
       'dev-refresh-secret-change-me',
     ),
     KAFKA_BROKERS: readString(config.KAFKA_BROKERS, 'KAFKA_BROKERS', 'localhost:9092'),
@@ -108,6 +110,25 @@ function readString(value: unknown, key: string, fallback: string): string {
   }
 
   return normalizedValue;
+}
+
+function readSecret(
+  value: unknown,
+  key: string,
+  environment: NodeEnvironment,
+  developmentFallback: string,
+): string {
+  if (environment === 'production' && value === undefined) {
+    throw new Error(`${key} is required in production`);
+  }
+
+  const secret = readString(value, key, developmentFallback);
+
+  if (environment === 'production' && secret === developmentFallback) {
+    throw new Error(`${key} cannot use the development fallback in production`);
+  }
+
+  return secret;
 }
 
 function readPort(value: unknown, key: string, fallback: number): number {

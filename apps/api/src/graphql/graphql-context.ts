@@ -1,13 +1,5 @@
 import type { AuthenticatedRequest } from '../modules/auth/types/auth.types';
-
-interface GraphQLContextInput {
-  connectionParams?: Record<string, unknown>;
-  req?: AuthenticatedRequest;
-}
-
-export interface LogScopeGraphQLContext {
-  req: AuthenticatedRequest;
-}
+import type { GraphQLContextInput, LogScopeGraphQLContext } from './types/graphql-context.types';
 
 export function createGraphQLContext(input: GraphQLContextInput): LogScopeGraphQLContext {
   if (input.req) {

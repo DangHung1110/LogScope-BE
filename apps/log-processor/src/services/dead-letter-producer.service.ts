@@ -2,23 +2,10 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 import { ConfigService } from '@nestjs/config';
 import type { EnvironmentVariables } from '@logscope/config';
 import { createKafkaClient, KafkaProducerService, KAFKA_TOPICS } from '@logscope/kafka';
+import { parseCommaSeparatedList } from '@logscope/shared';
 import { createNestKafkaLogger } from '../utils/nest-kafka-logger';
 import { redactSensitiveData } from '../processing/redact-sensitive-data';
-
-export interface DeadLetterMessage {
-  error: {
-    details?: unknown;
-    message: string;
-    name: string;
-  };
-  failedAt: string;
-  payload: unknown;
-  source: {
-    offset: string;
-    partition: number;
-    topic: string;
-  };
-}
+import type { DeadLetterMessage } from '../types/dead-letter-message.type';
 
 @Injectable()
 export class DeadLetterProducerService implements OnModuleInit, OnModuleDestroy {
@@ -27,11 +14,7 @@ export class DeadLetterProducerService implements OnModuleInit, OnModuleDestroy 
   constructor(configService: ConfigService<EnvironmentVariables, true>) {
     const logger = createNestKafkaLogger(new Logger(DeadLetterProducerService.name));
     const kafka = createKafkaClient({
-      brokers: configService
-        .getOrThrow<string>('KAFKA_BROKERS')
-        .split(',')
-        .map((broker) => broker.trim())
-        .filter(Boolean),
+      brokers: parseCommaSeparatedList(configService.getOrThrow<string>('KAFKA_BROKERS')),
       clientId: `${configService.getOrThrow<string>('KAFKA_CLIENT_ID')}-processor-dlq`,
       logger,
       requestTimeoutMs: configService.getOrThrow<number>('KAFKA_SEND_TIMEOUT_MS'),

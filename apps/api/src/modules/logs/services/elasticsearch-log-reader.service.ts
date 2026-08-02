@@ -7,9 +7,10 @@ import {
   type LogSearchResult,
   LogIndexService,
 } from '@logscope/elasticsearch';
+import { LogReaderPort } from '../application/ports/log-reader.port';
 
 @Injectable()
-export class ElasticsearchLogReaderService implements OnModuleDestroy {
+export class ElasticsearchLogReaderService implements LogReaderPort, OnModuleDestroy {
   private readonly client;
   private readonly logIndexService: LogIndexService;
 

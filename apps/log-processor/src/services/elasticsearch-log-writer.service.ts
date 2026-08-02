@@ -3,9 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import type { EnvironmentVariables } from '@logscope/config';
 import type { RawLogEvent } from '@logscope/contracts';
 import { createElasticsearchClient, LogIndexService } from '@logscope/elasticsearch';
+import { LogWriterPort } from '../application/ports/log-writer.port';
 
 @Injectable()
-export class ElasticsearchLogWriterService implements OnModuleInit, OnModuleDestroy {
+export class ElasticsearchLogWriterService implements LogWriterPort, OnModuleInit, OnModuleDestroy {
   private readonly client;
   private readonly logIndexService: LogIndexService;
   private readonly logger = new Logger(ElasticsearchLogWriterService.name);

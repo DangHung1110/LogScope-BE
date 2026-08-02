@@ -1,12 +1,5 @@
-import { Client, ClientOptions } from '@elastic/elasticsearch';
-
-export interface CreateElasticsearchClientOptions {
-  auth?: ClientOptions['auth'];
-  maxRetries?: number;
-  node: string;
-  requestTimeoutMs?: number;
-  tls?: ClientOptions['tls'];
-}
+import { Client } from '@elastic/elasticsearch';
+import type { CreateElasticsearchClientOptions } from '../types/elasticsearch-client.types';
 
 export function createElasticsearchClient(options: CreateElasticsearchClientOptions): Client {
   return new Client({

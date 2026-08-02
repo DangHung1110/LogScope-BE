@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma, ProjectMember, ProjectRole, User } from '@prisma/client';
-import { PrismaService } from '../database/prisma.service';
+import { PrismaService } from '@logscope/database';
 import { AddProjectMemberDto } from './dto/add-project-member.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectMemberDto } from './dto/update-project-member.dto';

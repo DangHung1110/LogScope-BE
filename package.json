@@ -14,6 +14,7 @@
     "dev:ingestion": "pnpm --filter ingestion-service start:dev",
     "dev:processor": "pnpm --filter log-processor start:dev",
     "build": "pnpm -r build",
+    "build:packages": "pnpm --filter @logscope/config --filter @logscope/contracts --filter @logscope/database --filter @logscope/elasticsearch --filter @logscope/http --filter @logscope/kafka --filter @logscope/shared build",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "db:check": "ts-node scripts/check-database.ts",
     "db:generate": "prisma generate",
@@ -22,10 +23,10 @@
     "db:seed": "prisma db seed",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
-    "lint": "pnpm --filter @logscope/config build && pnpm -r --parallel lint",
-    "lint:fix": "pnpm --filter @logscope/config build && pnpm -r --parallel lint:fix",
-    "typecheck": "pnpm -r typecheck",
-    "test": "pnpm -r test",
+    "lint": "pnpm build:packages && pnpm -r --parallel lint",
+    "lint:fix": "pnpm build:packages && pnpm -r --parallel lint:fix",
+    "typecheck": "pnpm build:packages && pnpm -r typecheck",
+    "test": "pnpm build:packages && pnpm -r test",
     "test:e2e": "pnpm --filter api test:e2e"
   },
   "devDependencies": {

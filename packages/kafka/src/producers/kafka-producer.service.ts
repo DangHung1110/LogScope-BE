@@ -1,20 +1,10 @@
-import type { Kafka, Producer, ProducerConfig, ProducerRecord, RecordMetadata } from 'kafkajs';
+import type { Kafka, Producer, ProducerRecord, RecordMetadata } from 'kafkajs';
 import { DEFAULT_KAFKA_SEND_TIMEOUT_MS } from '../config/retry.config';
 import { serializeJson } from '../serialization/json.serializer';
-import type { KafkaLogger } from '../types/logger';
-
-export interface KafkaProducerServiceOptions {
-  logger?: KafkaLogger;
-  producerConfig?: ProducerConfig;
-  sendTimeoutMs?: number;
-}
-
-export interface SendJsonMessageOptions {
-  headers?: Record<string, string | Buffer>;
-  key?: string;
-  partition?: number;
-  timestamp?: string;
-}
+import type {
+  KafkaProducerServiceOptions,
+  SendJsonMessageOptions,
+} from '../types/kafka-producer.types';
 
 export class KafkaProducerService {
   private connectPromise?: Promise<void>;

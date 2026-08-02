@@ -3,9 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { EnvironmentVariables } from '@logscope/config';
 import { LOG_RECEIVED_CHANNEL_V1, type RawLogEvent } from '@logscope/contracts';
 import { createClient, type RedisClientType } from 'redis';
+import { RealtimePublisherPort } from '../application/ports/realtime-publisher.port';
 
 @Injectable()
-export class RealtimeLogPublisherService implements OnModuleInit, OnModuleDestroy {
+export class RealtimeLogPublisherService
+  implements RealtimePublisherPort, OnModuleInit, OnModuleDestroy
+{
   private readonly client: RedisClientType;
   private readonly logger = new Logger(RealtimeLogPublisherService.name);
 

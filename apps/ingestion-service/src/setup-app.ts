@@ -1,11 +1,8 @@
-import { INestApplication, VersioningType } from '@nestjs/common';
-import helmet from 'helmet';
+import { INestApplication } from '@nestjs/common';
+import { configureHttpApplication } from '@logscope/http';
 
 export function configureIngestionApp(app: INestApplication): void {
-  app.use(helmet());
-  app.enableVersioning({
-    defaultVersion: '1',
-    type: VersioningType.URI,
+  configureHttpApplication(app, {
+    enableValidation: true,
   });
-  app.enableShutdownHooks();
 }

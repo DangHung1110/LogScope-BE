@@ -8,11 +8,12 @@ import {
   KAFKA_TOPICS,
   startKafkaConsumer,
 } from '@logscope/kafka';
+import { parseCommaSeparatedList } from '@logscope/shared';
 import type { Consumer, EachMessagePayload } from 'kafkajs';
+import { LogEventProcessorService } from '../application/log-event-processor.service';
 import { InvalidLogEventError } from '../errors/invalid-log-event.error';
 import { createNestKafkaLogger } from '../utils/nest-kafka-logger';
 import { DeadLetterProducerService } from './dead-letter-producer.service';
-import { LogEventProcessorService } from './log-event-processor.service';
 
 @Injectable()
 export class KafkaLogConsumerService implements OnApplicationBootstrap, OnModuleDestroy {
@@ -32,11 +33,7 @@ export class KafkaLogConsumerService implements OnApplicationBootstrap, OnModule
     this.concurrency = configService.getOrThrow<number>('LOG_PROCESSOR_CONCURRENCY');
     this.groupId = configService.getOrThrow<string>('LOG_PROCESSOR_GROUP_ID');
     this.kafka = createKafkaClient({
-      brokers: configService
-        .getOrThrow<string>('KAFKA_BROKERS')
-        .split(',')
-        .map((broker) => broker.trim())
-        .filter(Boolean),
+      brokers: parseCommaSeparatedList(configService.getOrThrow<string>('KAFKA_BROKERS')),
       clientId: `${configService.getOrThrow<string>('KAFKA_CLIENT_ID')}-processor`,
       logger: this.kafkaLogger,
       requestTimeoutMs: configService.getOrThrow<number>('KAFKA_SEND_TIMEOUT_MS'),

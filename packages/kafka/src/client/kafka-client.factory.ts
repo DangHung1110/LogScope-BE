@@ -1,18 +1,7 @@
-import { Kafka, logLevel, type KafkaConfig } from 'kafkajs';
+import { Kafka, logLevel } from 'kafkajs';
 import { DEFAULT_KAFKA_RETRY } from '../config/retry.config';
 import { createKafkaLogCreator } from '../types/logger';
-import type { KafkaLogger } from '../types/logger';
-
-export interface CreateKafkaClientOptions {
-  brokers: string[];
-  clientId: string;
-  connectionTimeoutMs?: number;
-  logger?: KafkaLogger;
-  requestTimeoutMs?: number;
-  retry?: KafkaConfig['retry'];
-  sasl?: KafkaConfig['sasl'];
-  ssl?: KafkaConfig['ssl'];
-}
+import type { CreateKafkaClientOptions } from '../types/kafka-client.types';
 
 export function createKafkaClient(options: CreateKafkaClientOptions): Kafka {
   return new Kafka({

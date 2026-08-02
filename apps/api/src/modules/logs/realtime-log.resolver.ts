@@ -5,10 +5,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import type { PublicUser } from '../auth/types/auth.types';
 import { ProjectsService } from '../projects/projects.service';
 import { LogEventModel } from './models/log-event.model';
-import {
-  type LogReceivedPayload,
-  RealtimeLogSubscriptionService,
-} from './services/realtime-log-subscription.service';
+import { RealtimeLogSubscriptionService } from './services/realtime-log-subscription.service';
+import type { LogReceivedPayload } from './types/realtime-log.types';
 
 @Resolver()
 export class RealtimeLogResolver {

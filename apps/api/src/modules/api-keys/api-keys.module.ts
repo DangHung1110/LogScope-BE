@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
+import { DatabaseModule } from '@logscope/database';
 import { AuthModule } from '../auth/auth.module';
-import { DatabaseModule } from '../database/database.module';
 import { ApiKeysController } from './api-keys.controller';
 import { ApiKeysService } from './api-keys.service';
-import { ApiKeyGuard } from './guards/api-key.guard';
 
 @Module({
   imports: [AuthModule, DatabaseModule],
   controllers: [ApiKeysController],
-  providers: [ApiKeysService, ApiKeyGuard],
-  exports: [ApiKeysService, ApiKeyGuard],
+  providers: [ApiKeysService],
+  exports: [ApiKeysService],
 })
 export class ApiKeysModule {}
