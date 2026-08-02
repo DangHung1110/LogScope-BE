@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
+import { DatabaseModule } from '@logscope/database';
 import { AuthModule } from '../auth/auth.module';
-import { DatabaseModule } from '../database/database.module';
 import { ProjectsModule } from '../projects/projects.module';
+import { LogSearchService } from './application/log-search.service';
+import { LogReaderPort } from './application/ports/log-reader.port';
 import { LogSearchResolver } from './log-search.resolver';
-import { LogSearchService } from './log-search.service';
 import { RealtimeLogResolver } from './realtime-log.resolver';
 import { ElasticsearchLogReaderService } from './services/elasticsearch-log-reader.service';
 import { RealtimeLogSubscriptionService } from './services/realtime-log-subscription.service';
@@ -16,6 +17,10 @@ import { RealtimeLogSubscriptionService } from './services/realtime-log-subscrip
     LogSearchService,
     RealtimeLogResolver,
     RealtimeLogSubscriptionService,
+    {
+      provide: LogReaderPort,
+      useExisting: ElasticsearchLogReaderService,
+    },
   ],
 })
 export class LogsModule {}

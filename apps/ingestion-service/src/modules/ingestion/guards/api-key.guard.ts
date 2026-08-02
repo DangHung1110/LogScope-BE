@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import type { Request } from 'express';
-import { ApiKeyService } from '../services/api-key.service';
+import { ApiKeyService } from '../infrastructure/api-key.service';
 import type { AuthenticatedRequest } from '../types/authenticated-project';
 
 @Injectable()

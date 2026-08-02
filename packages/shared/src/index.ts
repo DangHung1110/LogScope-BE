@@ -1,4 +1,2 @@
-export interface ServiceMetadata {
-  name: string;
-  version: string;
-}
+export * from './security/api-key.util';
+export * from './utils/string.util';

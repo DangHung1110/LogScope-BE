@@ -3,12 +3,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { configureIngestionApp } from '../../setup-app';
+import { LogIngestionService } from './application/log-ingestion.service';
+import { LogEventPublisherPort } from './application/ports/log-event-publisher.port';
 import { ApiKeyGuard } from './guards/api-key.guard';
 import { RateLimitGuard } from './guards/rate-limit.guard';
 import { IngestionController } from './ingestion.controller';
-import { ApiKeyService } from './services/api-key.service';
-import { KafkaLogProducerService } from './services/kafka-log-producer.service';
-import { LogIngestionService } from './services/log-ingestion.service';
+import { ApiKeyService } from './infrastructure/api-key.service';
 
 interface ApiKeyServiceMock {
   validate: jest.Mock<
@@ -21,7 +21,7 @@ interface ApiKeyServiceMock {
   >;
 }
 
-interface KafkaLogProducerServiceMock {
+interface LogEventPublisherMock {
   publish: jest.Mock<Promise<void>, [unknown]>;
   publishBatch: jest.Mock<Promise<void>, [unknown[]]>;
 }
@@ -29,7 +29,7 @@ interface KafkaLogProducerServiceMock {
 describe('IngestionController (integration)', () => {
   let app: INestApplication<App>;
   let apiKeyService: ApiKeyServiceMock;
-  let kafkaLogProducer: KafkaLogProducerServiceMock;
+  let eventPublisher: LogEventPublisherMock;
 
   const validPayload = {
     attributes: {
@@ -53,7 +53,7 @@ describe('IngestionController (integration)', () => {
           }),
       ),
     };
-    kafkaLogProducer = {
+    eventPublisher = {
       publish: jest.fn<Promise<void>, [unknown]>(() => Promise.resolve()),
       publishBatch: jest.fn<Promise<void>, [unknown[]]>(() => Promise.resolve()),
     };
@@ -69,8 +69,8 @@ describe('IngestionController (integration)', () => {
           useValue: apiKeyService,
         },
         {
-          provide: KafkaLogProducerService,
-          useValue: kafkaLogProducer,
+          provide: LogEventPublisherPort,
+          useValue: eventPublisher,
         },
       ],
     }).compile();
@@ -95,7 +95,7 @@ describe('IngestionController (integration)', () => {
         expect(body.eventId).toEqual(expect.any(String));
       });
 
-    expect(kafkaLogProducer.publish).toHaveBeenCalledWith(
+    expect(eventPublisher.publish).toHaveBeenCalledWith(
       expect.objectContaining({
         environment: validPayload.environment,
         level: validPayload.level,
@@ -116,7 +116,7 @@ describe('IngestionController (integration)', () => {
       })
       .expect(400);
 
-    expect(kafkaLogProducer.publish).not.toHaveBeenCalled();
+    expect(eventPublisher.publish).not.toHaveBeenCalled();
   });
 
   it('rejects requests without API key with 401', async () => {
@@ -124,7 +124,7 @@ describe('IngestionController (integration)', () => {
   });
 
   it('returns 503 when Kafka publishing fails', async () => {
-    kafkaLogProducer.publish.mockRejectedValueOnce(new Error('Kafka unavailable'));
+    eventPublisher.publish.mockRejectedValueOnce(new Error('Kafka unavailable'));
 
     await request(app.getHttpServer())
       .post('/v1/logs')
@@ -147,7 +147,7 @@ describe('IngestionController (integration)', () => {
         expect(body.eventIds).toHaveLength(2);
       });
 
-    expect(kafkaLogProducer.publishBatch).toHaveBeenCalledWith(
+    expect(eventPublisher.publishBatch).toHaveBeenCalledWith(
       expect.arrayContaining([
         expect.objectContaining({
           projectId: '1f2450ff-0785-4798-a1b7-011799bd5ee3',

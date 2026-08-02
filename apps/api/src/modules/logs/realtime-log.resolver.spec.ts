@@ -2,10 +2,8 @@ import { NotFoundException } from '@nestjs/common';
 import type { PublicUser } from '../auth/types/auth.types';
 import { ProjectsService } from '../projects/projects.service';
 import { RealtimeLogResolver } from './realtime-log.resolver';
-import {
-  type LogReceivedPayload,
-  RealtimeLogSubscriptionService,
-} from './services/realtime-log-subscription.service';
+import { RealtimeLogSubscriptionService } from './services/realtime-log-subscription.service';
+import type { LogReceivedPayload } from './types/realtime-log.types';
 
 describe('RealtimeLogResolver', () => {
   const projectId = 'f9856a5a-45f1-4051-bb80-228de0bdbbc1';

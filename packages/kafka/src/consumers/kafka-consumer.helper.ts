@@ -1,30 +1,8 @@
+import type { ConsumerSubscribeTopic } from 'kafkajs';
 import type {
-  Consumer,
-  ConsumerConfig,
-  ConsumerRunConfig,
-  ConsumerSubscribeTopic,
-  EachMessagePayload,
-  Kafka,
-} from 'kafkajs';
-import type { KafkaLogger } from '../types/logger';
-
-export interface KafkaConsumerHelperOptions {
-  consumerConfig?: Omit<ConsumerConfig, 'groupId'>;
-  fromBeginning?: boolean;
-  groupId: string;
-  kafka: Kafka;
-  logger?: KafkaLogger;
-  onConsumerCreated?: (consumer: Consumer) => void;
-  runConfig: Omit<ConsumerRunConfig, 'eachMessage'> & {
-    eachMessage: (payload: EachMessagePayload) => Promise<void>;
-  };
-  topics: readonly string[];
-}
-
-export interface KafkaConsumerHandle {
-  consumer: Consumer;
-  disconnect: () => Promise<void>;
-}
+  KafkaConsumerHandle,
+  KafkaConsumerHelperOptions,
+} from '../types/kafka-consumer.types';
 
 export async function startKafkaConsumer(
   options: KafkaConsumerHelperOptions,

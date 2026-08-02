@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { EnvironmentVariables } from '@logscope/config';
-
-export interface AppInfo {
-  name: string;
-  status: 'ok';
-  version: string;
-}
+import type { AppInfo } from './types/app-info.type';
 
 @Injectable()
 export class AppService {

@@ -5,10 +5,11 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "pnpm --filter @logscope/config build && pnpm --filter @logscope/contracts build && pnpm --filter @logscope/kafka build && pnpm --filter @logscope/elasticsearch build && tsc -p tsconfig.json",
+    "build": "pnpm build:deps && tsc -p tsconfig.json",
+    "build:deps": "pnpm --filter @logscope/config build && pnpm --filter @logscope/contracts build && pnpm --filter @logscope/kafka build && pnpm --filter @logscope/elasticsearch build && pnpm --filter @logscope/shared build",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
-    "start:dev": "pnpm --filter @logscope/config build && pnpm --filter @logscope/contracts build && pnpm --filter @logscope/kafka build && pnpm --filter @logscope/elasticsearch build && ts-node --transpile-only src/main.ts",
+    "start:dev": "pnpm build:deps && ts-node --transpile-only src/main.ts",
     "test": "pnpm --filter @logscope/contracts build && jest --runInBand",
     "test:ci": "pnpm test",
     "typecheck": "tsc --noEmit"
@@ -18,6 +19,7 @@
     "@logscope/contracts": "workspace:*",
     "@logscope/elasticsearch": "workspace:*",
     "@logscope/kafka": "workspace:*",
+    "@logscope/shared": "workspace:*",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",

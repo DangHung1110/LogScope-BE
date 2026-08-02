@@ -3,11 +3,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { validateEnvironment } from '@logscope/config';
+import { DatabaseModule } from '@logscope/database';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ApiKeysModule } from './modules/api-keys/api-keys.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { DatabaseModule } from './modules/database/database.module';
 import { HealthModule } from './modules/health/health.module';
 import { LogsModule } from './modules/logs/logs.module';
 import { ProjectsModule } from './modules/projects/projects.module';
@@ -17,6 +17,7 @@ import { createGraphQLContext } from './graphql/graphql-context';
   imports: [
     ConfigModule.forRoot({
       cache: true,
+      envFilePath: ['.env', '../../.env'],
       expandVariables: true,
       isGlobal: true,
       validate: validateEnvironment,

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
+import { DatabaseModule } from '@logscope/database';
 import { AuthModule } from '../auth/auth.module';
-import { DatabaseModule } from '../database/database.module';
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
 

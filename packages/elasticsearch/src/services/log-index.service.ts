@@ -1,41 +1,14 @@
 import { Client, estypes } from '@elastic/elasticsearch';
-import type { LogLevel, RawLogEvent } from '@logscope/contracts';
+import type { RawLogEvent } from '@logscope/contracts';
+import { InvalidLogSearchCursorError } from '../errors/invalid-log-search-cursor.error';
 import { LOGS_INDEX_NAME, LOGS_INDEX_TEMPLATE_NAME } from '../indices/log-index.constants';
 import { LOG_INDEX_MAPPINGS, LOG_INDEX_TEMPLATE } from '../indices/log-index.mapping';
-
-export interface LogIndexServiceOptions {
-  indexName?: string;
-}
-
-export interface LogSearchFilter {
-  cursor?: string;
-  environments?: readonly string[];
-  from: string;
-  levels?: readonly LogLevel[];
-  limit: number;
-  projectId: string;
-  search?: string;
-  services?: readonly string[];
-  to: string;
-  traceId?: string;
-}
-
-export interface LogSearchResult {
-  items: RawLogEvent[];
-  nextCursor?: string;
-}
-
-interface LogSearchCursor {
-  eventId: string;
-  timestamp: string;
-}
-
-export class InvalidLogSearchCursorError extends Error {
-  constructor() {
-    super('Invalid log search cursor');
-    this.name = InvalidLogSearchCursorError.name;
-  }
-}
+import type {
+  LogIndexServiceOptions,
+  LogSearchCursor,
+  LogSearchFilter,
+  LogSearchResult,
+} from '../types/log-index.types';
 
 export class LogIndexService {
   private readonly indexName: string;

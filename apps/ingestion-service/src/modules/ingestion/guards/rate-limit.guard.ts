@@ -6,23 +6,28 @@ import {
   Injectable,
 } from '@nestjs/common';
 import type { Request } from 'express';
-
-interface RateLimitBucket {
-  count: number;
-  resetAt: number;
-}
+import { createHash } from 'node:crypto';
+import type { RateLimitBucket } from '../types/rate-limit.types';
 
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 120;
+const PRUNE_INTERVAL = 500;
 
 @Injectable()
 export class RateLimitGuard implements CanActivate {
   private readonly buckets = new Map<string, RateLimitBucket>();
+  private requestCount = 0;
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest<Request>();
     const identity = this.getIdentity(request);
     const now = Date.now();
+    this.requestCount += 1;
+
+    if (this.requestCount % PRUNE_INTERVAL === 0) {
+      this.pruneExpiredBuckets(now);
+    }
+
     const bucket = this.buckets.get(identity);
 
     if (!bucket || bucket.resetAt <= now) {
@@ -46,9 +51,17 @@ export class RateLimitGuard implements CanActivate {
     const apiKey = request.headers['x-api-key'];
 
     if (typeof apiKey === 'string' && apiKey.length > 0) {
-      return apiKey;
+      return `key:${createHash('sha256').update(apiKey).digest('hex')}`;
     }
 
-    return request.ip ?? 'unknown';
+    return `ip:${request.ip ?? 'unknown'}`;
+  }
+
+  private pruneExpiredBuckets(now: number): void {
+    for (const [identity, bucket] of this.buckets) {
+      if (bucket.resetAt <= now) {
+        this.buckets.delete(identity);
+      }
+    }
   }
 }

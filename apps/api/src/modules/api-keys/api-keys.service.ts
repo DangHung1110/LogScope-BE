@@ -5,14 +5,13 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { ApiKey, ProjectRole } from '@prisma/client';
+import { PrismaService } from '@logscope/database';
+import { API_KEY_PREFIX, extractApiKeyLookupPrefix } from '@logscope/shared';
 import * as bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
-import { PrismaService } from '../database/prisma.service';
 import { CreateApiKeyDto } from './dto/create-api-key.dto';
 import { ApiKeyCreateResponse, ApiKeyResponse } from './types/api-key.types';
 
-const API_KEY_PREFIX = 'sp_live_';
-const API_KEY_PREFIX_LENGTH = 12;
 const API_KEY_RANDOM_BYTES = 32;
 const API_KEY_HASH_SALT_ROUNDS = 12;
 const API_KEY_MANAGEMENT_ROLES: ProjectRole[] = [ProjectRole.OWNER, ProjectRole.ADMIN];
@@ -29,7 +28,7 @@ export class ApiKeysService {
     await this.requireProjectRole(userId, projectId, API_KEY_MANAGEMENT_ROLES);
 
     const key = await this.generateUniqueApiKey();
-    const prefix = this.extractPrefix(key);
+    const prefix = extractApiKeyLookupPrefix(key);
     const keyHash = await bcrypt.hash(key, API_KEY_HASH_SALT_ROUNDS);
     const apiKey = await this.prisma.apiKey.create({
       data: { keyHash, name: dto.name, prefix, projectId },
@@ -60,24 +59,6 @@ export class ApiKeysService {
     });
   }
 
-  async validate(apiKey: string): Promise<boolean> {
-    if (!this.isValidApiKeyShape(apiKey)) return false;
-
-    const persistedApiKey = await this.prisma.apiKey.findUnique({
-      where: { prefix: this.extractPrefix(apiKey) },
-    });
-    if (!persistedApiKey || persistedApiKey.revokedAt) return false;
-
-    const isValid = await bcrypt.compare(apiKey, persistedApiKey.keyHash);
-    if (!isValid) return false;
-
-    await this.prisma.apiKey.update({
-      data: { lastUsedAt: new Date() },
-      where: { id: persistedApiKey.id },
-    });
-    return true;
-  }
-
   private async requireProjectAccess(userId: string, projectId: string): Promise<void> {
     const member = await this.prisma.projectMember.findUnique({
       where: { userId_projectId: { projectId, userId } },
@@ -103,7 +84,7 @@ export class ApiKeysService {
     for (let attempt = 0; attempt < 5; attempt += 1) {
       const key = this.generateApiKey();
       const existingApiKey = await this.prisma.apiKey.findUnique({
-        where: { prefix: this.extractPrefix(key) },
+        where: { prefix: extractApiKeyLookupPrefix(key) },
       });
       if (!existingApiKey) return key;
     }
@@ -112,14 +93,6 @@ export class ApiKeysService {
 
   private generateApiKey(): string {
     return `${API_KEY_PREFIX}${randomBytes(API_KEY_RANDOM_BYTES).toString('base64url')}`;
-  }
-
-  private extractPrefix(apiKey: string): string {
-    return apiKey.slice(0, API_KEY_PREFIX_LENGTH);
-  }
-
-  private isValidApiKeyShape(apiKey: string): boolean {
-    return apiKey.startsWith(API_KEY_PREFIX) && apiKey.length > API_KEY_PREFIX_LENGTH;
   }
 
   private toApiKeyResponse(apiKey: ApiKey): ApiKeyResponse {

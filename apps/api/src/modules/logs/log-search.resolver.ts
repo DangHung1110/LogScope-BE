@@ -4,7 +4,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import type { PublicUser } from '../auth/types/auth.types';
 import { LogFilterInput } from './dto/log-filter.input';
-import { LogSearchService } from './log-search.service';
+import { LogSearchService } from './application/log-search.service';
 import { LogConnectionModel } from './models/log-connection.model';
 
 @Resolver()

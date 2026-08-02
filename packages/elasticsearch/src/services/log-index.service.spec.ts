@@ -1,6 +1,7 @@
 import type { Client } from '@elastic/elasticsearch';
 import type { RawLogEvent } from '@logscope/contracts';
-import { InvalidLogSearchCursorError, LogIndexService } from './log-index.service';
+import { InvalidLogSearchCursorError } from '../errors/invalid-log-search-cursor.error';
+import { LogIndexService } from './log-index.service';
 
 interface SearchRequest {
   query?: {

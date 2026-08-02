@@ -5,3 +5,6 @@ export * from './producers/kafka-producer.service';
 export * from './serialization/json.serializer';
 export * from './topics';
 export * from './types/logger';
+export * from './types/kafka-client.types';
+export * from './types/kafka-consumer.types';
+export * from './types/kafka-producer.types';

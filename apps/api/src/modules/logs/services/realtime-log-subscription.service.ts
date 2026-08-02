@@ -1,14 +1,11 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentVariables } from '@logscope/config';
-import { LOG_RECEIVED_CHANNEL_V1, rawLogEventSchema, type RawLogEvent } from '@logscope/contracts';
+import { LOG_RECEIVED_CHANNEL_V1, rawLogEventSchema } from '@logscope/contracts';
 import { PubSub } from 'graphql-subscriptions';
 import { createClient, type RedisClientType } from 'redis';
 import { EventEmitter } from 'node:events';
-
-export interface LogReceivedPayload {
-  logReceived: RawLogEvent;
-}
+import type { LogReceivedPayload } from '../types/realtime-log.types';
 
 @Injectable()
 export class RealtimeLogSubscriptionService implements OnModuleInit, OnModuleDestroy {

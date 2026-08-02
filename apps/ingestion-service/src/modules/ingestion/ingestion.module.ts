@@ -1,18 +1,20 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { validateEnvironment } from '@logscope/config';
-import { DatabaseModule } from '../database/database.module';
+import { DatabaseModule } from '@logscope/database';
+import { LogIngestionService } from './application/log-ingestion.service';
+import { LogEventPublisherPort } from './application/ports/log-event-publisher.port';
 import { IngestionController } from './ingestion.controller';
 import { ApiKeyGuard } from './guards/api-key.guard';
 import { RateLimitGuard } from './guards/rate-limit.guard';
-import { ApiKeyService } from './services/api-key.service';
-import { KafkaLogProducerService } from './services/kafka-log-producer.service';
-import { LogIngestionService } from './services/log-ingestion.service';
+import { ApiKeyService } from './infrastructure/api-key.service';
+import { KafkaLogProducerAdapter } from './infrastructure/kafka-log-producer.adapter';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       cache: true,
+      envFilePath: ['.env', '../../.env'],
       expandVariables: true,
       isGlobal: true,
       validate: validateEnvironment,
@@ -23,8 +25,12 @@ import { LogIngestionService } from './services/log-ingestion.service';
   providers: [
     ApiKeyGuard,
     ApiKeyService,
-    KafkaLogProducerService,
+    KafkaLogProducerAdapter,
     LogIngestionService,
+    {
+      provide: LogEventPublisherPort,
+      useExisting: KafkaLogProducerAdapter,
+    },
     RateLimitGuard,
   ],
 })
